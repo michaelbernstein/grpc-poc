@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "panopticon/";
+package panopticon;
+
+service Panopticon {
+    rpc Query(BotQuery) returns (Inference) {}
+    rpc ProcessBotQueries (stream BotQueryBatch) returns (stream Inference);
+}
+
+message Inference {
+    google.protobuf.Timestamp timestamp = 1;
+    google.protobuf.Timestamp behavior_start_timestamp = 2;
+    google.protobuf.Timestamp behavior_end_timestamp = 3;
+    google.protobuf.Duration duration = 4;
+    bool is_bot = 5;
+    float confidence_score = 6;
+    string bot_category = 7;
+    string risk_level = 8;
+    repeated string reasoning = 9;
+    string response_action = 10;
+    string trace_id = 11;
+    string geolocation = 12;
+    float confidence_interval_lower = 13;
+    float confidence_interval_upper = 14;
+}
+
+message BotQuery {
+    string url = 1;
+    string user_agent = 2;
+    string referrer = 3;
+    string JA3_hash = 4;
+    string ip_address = 5;
+    string session_id = 6;
+    map<string, string> http_headers = 7;
+    string request_method = 8;
+    int32 request_payload_size = 9;
+    int32 requests_count_in_session = 10;
+    string referral_path = 11;
+    double interaction_time = 12;
+}
+
+message BotQueryBatch {
+    repeated BotQuery queries = 1;
+}
